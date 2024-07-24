@@ -1,0 +1,12 @@
+<html>
+  <head>
+    {{ content_for_header }}
+    {{ 'root.css' | asset_url | stylesheet_tag }}
+
+  </head>
+  <body>
+    {% render 'header' %}
+    {{ content_for_layout }}
+    {% render 'footer' %}
+  </body>
+</html>

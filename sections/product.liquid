@@ -1,0 +1,29 @@
+{{ 'section-product.css' | asset_url | stylesheet_tag }}
+
+<div class="section-product">
+
+  <div class="product-image">
+    {{ product.featured_image | image_url: width: 500 | image_tag }}</div>
+  <div class="product-info">
+    <div class="product-title">{{ product.title | upcase }}</div>
+    <div class="product-price">
+      {{ product.price | money }}</div>
+  </div>
+</div>
+
+{% schema %}
+  {
+    "name": "product",
+    "settings": [
+      {
+        "id": "product-name",
+        "type": "text",
+        "label": "Product's name"
+      }, {
+        "id": "product-price",
+        "type": "number",
+        "label": "Product's price"
+      }
+    ]
+  }
+{% endschema %}
