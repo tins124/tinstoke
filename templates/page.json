@@ -1,0 +1,12 @@
+{
+    "name": "page",
+    "sections":{
+        "page": {
+            "id": "page",
+            "type": "page"
+        }
+    },
+    "order": [
+        "page"
+    ]
+}

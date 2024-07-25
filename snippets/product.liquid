@@ -1,0 +1,7 @@
+<div class="product-grid">
+  <a href="{{product.url}}">
+    {{ product.featured_image | image_url: width: 200 | image_tag }}
+  </a>
+  <div>{{ product.title | upcase }}</div>
+  <div>{{ product.price | money }}</div>
+</div>

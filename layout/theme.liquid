@@ -6,7 +6,9 @@
   </head>
   <body>
     {% render 'header' %}
-    {{ content_for_layout }}
+    <div class="content">
+      {{ content_for_layout }}
+    </div>
     {% render 'footer' %}
   </body>
 </html>

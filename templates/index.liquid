@@ -1,11 +1,8 @@
 <h2>{{ collections['frontpage'].title }}</h2>
 
-{% for product in collections['automated-collection'].products %}
-  <div>
-    <a href="{{product.url}}">
-      {{ product.featured_image | image_url: width: 200 | image_tag }}
-      <div>{{ product.title | upcase }}</div>
-      <div>{{ product.price | money }}</div>
-    </a>
-  </div>
-{% endfor %}
+<a href="/collections">All collections</a>
+<div id="products-recommendation">
+  {% for product in collections['automated-collection'].products %}
+    {% render 'product', product: product %}
+  {% endfor %}
+</div>

@@ -1,0 +1,72 @@
+<h1>{{section.settings.title}}</h1>
+
+<div>
+  <select id="sort-by">
+    {% assign sort_by = collection.sort_by | default: collection.default_sort_by %}
+
+    {% for option in collection.sort_options %}
+      <option
+        value="{{ option.value }}"
+        {% if option.value == sort_by %}
+        selected="selected"
+        {% endif %}>
+        {{ option.name }}
+      </option>
+    {% endfor %}
+  </select>
+</div>
+{% paginate collection.products by 6 %}
+  <div class="collection-product">
+    {% for product in collection.products %}
+      <div class="product-grid">
+        <a href="{{product.url}}">
+          {{ product.featured_image | image_url: width: 200 | image_tag }}
+        </a>
+        <div>{{ product.title | upcase }}</div>
+        <div>{{ product.price | money }}</div>
+      </div>
+    {% endfor %}
+  </div>
+  <div id="pagination" style="display: flex; justify-content: space-evenly">
+    {{ paginate | default_pagination }}
+  </div>
+{% endpaginate %}
+
+<script>
+  Shopify.queryParams = {};
+  
+  // Preserve existing query parameters
+  if (location.search.length) {
+    var params = location.search.substr(1).split('&');
+  
+    for (var i = 0; i < params.length; i++) {
+      var keyValue = params[i].split('=');
+  
+      if (keyValue.length) {
+        Shopify.queryParams[decodeURIComponent(keyValue[0])] = decodeURIComponent(keyValue[1]);
+      }
+    }
+  }
+  
+  // Update sort_by query parameter on select change
+  document.querySelector('#sort-by').addEventListener('change', function(e) {
+    var value = e.target.value;
+  
+    Shopify.queryParams.sort_by = value;
+    location.search = new URLSearchParams(Shopify.queryParams).toString();
+  });
+</script>
+
+{% schema %}
+  {
+    "name": "collection-section",
+    "settings": [
+      {
+        "id": "title",
+        "label" :"Title",
+        "type": "text",
+        "default": "{{collection.title}}"
+      }
+    ]
+  }
+{% endschema %}

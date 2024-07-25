@@ -6,8 +6,26 @@
     {{ product.featured_image | image_url: width: 500 | image_tag }}</div>
   <div class="product-info">
     <div class="product-title">{{ product.title | upcase }}</div>
+    <div class="product-description">{{ product.description }}</div>
     <div class="product-price">
-      {{ product.price | money }}</div>
+      {{ product.price | money }}
+    </div>
+
+    {% form 'product'
+      , product %}
+      <select name="id" onchange>
+        {% for variant in product.variants %}
+          <option value={{variant.id}}>{{ variant.title }}</option>
+        {% endfor %}
+      </select>
+      <input
+        type="number"
+        name="quantity"
+        min="1"
+        value="1">
+
+      <input type="submit" value="{{"general.add_to_cart" | t}}">
+    {% endform %}
   </div>
 </div>
 
