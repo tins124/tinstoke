@@ -1,12 +1,12 @@
 {
-    "name": "list-collections",
-    "sections": {
-        "list-collections": {
-            "id": "list-collections",
-            "type": "list-collections"
-        }
-    },
-    "order": [
-        "list-collections"
-    ]
+  "sections": {
+    "list-collections": {
+      "type": "list-collections",
+      "settings": {
+      }
+    }
+  },
+  "order": [
+    "list-collections"
+  ]
 }

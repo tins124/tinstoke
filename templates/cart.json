@@ -1,12 +1,12 @@
 {
-    "name": "cart",
-    "sections": {
-        "cart": {
-            "id": "cart",
-            "type": "cart"
-        }
-    },
-    "order": [
-        "cart"
-    ]
+  "sections": {
+    "cart": {
+      "type": "cart",
+      "settings": {
+      }
+    }
+  },
+  "order": [
+    "cart"
+  ]
 }
