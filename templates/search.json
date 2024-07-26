@@ -1,12 +1,12 @@
 {
-    "name": "search",
-    "sections": {
-        "search": {
-            "id": "search",
-            "type": "search"
-        }
-    },
-    "order": [
-        "search"
-    ]
+  "sections": {
+    "search": {
+      "type": "search",
+      "settings": {
+      }
+    }
+  },
+  "order": [
+    "search"
+  ]
 }
