@@ -1,0 +1,28 @@
+#cart-drawer{
+    height: 100%;
+    width: 100%;
+    position: fixed;
+}
+
+.inactive{
+    visibility: hidden;
+}
+
+.cart-background{
+    background-color: grey;
+    opacity: 0.8;
+    height: 100%;
+    width: 100%;
+    position: fixed;
+    z-index: 5;
+}
+
+#cart-drawer .cart-product{
+    position: fixed;
+    height: 100%;
+    width: 50%;
+    background-color: white;
+    opacity: 1;
+    padding: 20px;
+    z-index: 10;
+}

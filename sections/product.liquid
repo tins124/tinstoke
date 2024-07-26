@@ -2,8 +2,25 @@
 
 <div class="section-product">
 
-  <div class="product-image">
-    {{ product.featured_image | image_url: width: 500 | image_tag }}</div>
+  <div>
+    {% unless product.selected_or_first_available_variant.featured_image == null %}
+      <img
+        class="product-image"
+        src="{{product.selected_or_first_available_variant.featured_image | image_url}}"
+        alt=""
+        width="500px"
+        height="500px">
+
+    {% else %}
+      <img
+        class="product-image"
+        src="{{product.featured_image | image_url}}"
+        alt=""
+        width="500px"
+        height="500px">
+    {% endunless %}
+  </div>
+
   <div class="product-info">
     <div class="product-title">{{ product.title | upcase }}</div>
     <div class="product-description">{{ product.description }}</div>
@@ -43,6 +60,7 @@
         </div>
       {% endif %}
       <input
+        id="product-quantity"
         type="number"
         name="quantity"
         min="1"
@@ -50,10 +68,19 @@
         style="margin: 2px; padding: 10px; font-size: 20px; border-radius: 10px">
 
       <div class="button-add_to_cart">
-        <input
+        <button
+          id="button-add_to_cart"
           type="submit"
-          value="{{"general.add_to_cart" | t}}"
-          style="background-color: white; color: black; font-size: 30px; border: 2px solid; padding: 10px; margin: 2px; border-radius: 10px;">
+          style="color: black; font-size: 30px; border: 2px solid; padding: 10px; margin: 2px; border-radius: 10px;"
+          {% unless product.selected_or_first_available_variant.available %}
+          disabled
+          {% endunless %}>
+          {% if product.selected_or_first_available_variant.available %}
+            {{ "general.add_to_cart" | t }}
+          {% else %}
+            {{ "general.out_of_stock" | t }}
+          {% endif %}
+        </button>
       </div>
     {% endform %}
   </div>
@@ -87,9 +114,51 @@
       var url = new URL(document.location.href)
       url.searchParams.set('variant', matchedVariant.id)
   
-      window.location.href = url.toString()
+      window.history.replaceState(null, null, url.toString())
+      document.querySelector('.product-price').textContent = Shopify.formatMoney(matchedVariant.price)
+  
+      document.querySelector('.product-image').setAttribute('src', matchedVariant.featured_image.src)
+  
+      var buttonAddToCart = document.querySelector('#button-add_to_cart')
+  
+      if(matchedVariant.available){
+        buttonAddToCart.textContent = "{{'general.add_to_cart' | t}}"
+        buttonAddToCart.disabled = false
+      }
+      else{
+        buttonAddToCart.textContent = "{{'general.out_of_stock' | t}}"
+        buttonAddToCart.disabled = true
+      }
     })
   })
+  
+  var buttonAddToCart = document.querySelector('#button-add_to_cart')
+  buttonAddToCart.addEventListener('click', addToCart)
+  
+  function addToCart(e) {
+    e.preventDefault()
+  
+    var cartDrawer = document.querySelector("#cart-drawer")
+  
+    var id = document.querySelector('#variant-id').value
+    var quantity = document.querySelector('#product-quantity').value
+    console.log(quantity)
+  
+    axios.post('/cart/add', {
+        id,
+        quantity
+    })
+    .then((value) => {
+      axios.get('/cart.js')
+      .then(value => {
+        
+        document.querySelector("#cart-drawer").classList.remove('inactive')
+      })
+    })
+    .catch(error => {
+      console.log(error)
+    })
+  }
 </script>
 
 {% schema %}
@@ -104,6 +173,11 @@
         "id": "product-price",
         "type": "number",
         "label": "Product's price"
+      }
+    ],
+    "presets": [
+      {
+        "name": "product"
       }
     ]
   }

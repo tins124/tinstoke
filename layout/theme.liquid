@@ -2,11 +2,14 @@
   <head>
     {{ content_for_header }}
     {{ 'root.css' | asset_url | stylesheet_tag }}
+    <script src="{{ 'shopify-money.js' |  asset_url }}" async></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js" defer></script>
 
   </head>
   <body>
     {% render 'header' %}
     <div class="content">
+      {% section 'cart-drawer' %}
       {{ content_for_layout }}
     </div>
     {% render 'footer' %}
