@@ -4,9 +4,14 @@
         "products": {
             "id": "products",
             "type": "product"
+        },
+        "product-recommendations": {
+            "id": "product-recommendations",
+            "type": "product-recommendations"
         }
     },
     "order": [
-        "products"
+        "products",
+        "product-recommendations"
     ]
 }

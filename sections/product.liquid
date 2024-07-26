@@ -8,26 +8,89 @@
     <div class="product-title">{{ product.title | upcase }}</div>
     <div class="product-description">{{ product.description }}</div>
     <div class="product-price">
-      {{ product.price | money }}
+      <span>{{ product.selected_or_first_available_variant.compare_at_price }}</span>
+      <span>{{ product.selected_or_first_available_variant.price | money }}</span>
     </div>
 
     {% form 'product'
       , product %}
-      <select name="id" onchange>
-        {% for variant in product.variants %}
-          <option value={{variant.id}}>{{ variant.title }}</option>
-        {% endfor %}
-      </select>
+
+      <input
+        id="variant-id"
+        type="hidden"
+        name="id"
+        value="{{product.selected_or_first_available_variant.id}}">
+
+      {% if product.variants.size > 1 %}
+        <div class="product-option">
+          {% for option in product.options_with_values %}
+            <fieldset style="border-radius: 10px;">
+              <legend>{{ option.name }}</legend>
+
+              {% for value in option.values %}
+                <input
+                  {% if option.selected_value == value %}
+                  checked
+                  {% endif %}
+                  type="radio"
+                  value="{{value}}"
+                  name="{{option.name}}"
+                  id="{{option.name | handleize}}-{{value | handleize}}">
+                <label for="{{option.name | handleize}}-{{value | handleize}}">{{ value.name }}</label>
+              {% endfor %}
+            </fieldset>
+          {% endfor %}
+        </div>
+      {% endif %}
       <input
         type="number"
         name="quantity"
         min="1"
-        value="1">
+        value="1"
+        style="margin: 2px; padding: 10px; font-size: 20px; border-radius: 10px">
 
-      <input type="submit" value="{{"general.add_to_cart" | t}}">
+      <div class="button-add_to_cart">
+        <input
+          type="submit"
+          value="{{"general.add_to_cart" | t}}"
+          style="background-color: white; color: black; font-size: 30px; border: 2px solid; padding: 10px; margin: 2px; border-radius: 10px;">
+      </div>
     {% endform %}
   </div>
 </div>
+
+<script>
+  var product = {{product |  json}}
+  
+  document.querySelectorAll('.product-option input[type="radio"]').forEach(radio => {
+    radio.addEventListener('change', () => {
+      var selectedOption = []
+  
+      document.querySelectorAll('.product-option input[type="radio"]:checked').forEach(check => {
+        selectedOption.push(check.value)
+      })
+  
+      var matchedVariant = product.variants.find(variant => {
+        var pass = true
+  
+        for(var i = 0; i < selectedOption.length; i++){
+          if(selectedOption.indexOf(variant.options[i]) === -1){
+            pass = false
+            break
+          }    
+        }
+        return pass
+      })
+  
+      document.querySelector("#variant-id").value = matchedVariant.id
+  
+      var url = new URL(document.location.href)
+      url.searchParams.set('variant', matchedVariant.id)
+  
+      window.location.href = url.toString()
+    })
+  })
+</script>
 
 {% schema %}
   {
