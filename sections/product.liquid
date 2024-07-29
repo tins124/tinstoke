@@ -138,11 +138,14 @@
   function addToCart(e) {
     e.preventDefault()
   
-    var cartDrawer = document.querySelector("#cart-drawer")
+    var cartDrawer = document.getElementById("cart-drawer")
+    var cartOverlay = document.getElementById('cart-overlay');
+    
+    cartDrawer.classList.toggle('open');
+    cartOverlay.classList.toggle('open');
   
     var id = document.querySelector('#variant-id').value
     var quantity = document.querySelector('#product-quantity').value
-    console.log(quantity)
   
     axios.post('/cart/add', {
         id,
@@ -151,8 +154,39 @@
     .then((value) => {
       axios.get('/cart.js')
       .then(value => {
-        
-        document.querySelector("#cart-drawer").classList.remove('inactive')
+        var cart = value.data
+        var contentCart = document.querySelector('.cart-content')
+        console.log(value.data)
+  
+        // var routeCheckout = {{ routes.cart_url | json }}
+        // console.log(routeCheckout)
+        var stringHTML = '<form action="/cart" method="post">'
+  
+        cart.items.forEach(item =>{
+          var itemHtml = `<div class="product-grid">
+              <img src=${item.image} width='100px' height='100px'>
+              <div class="item-title">${item.title}</div>
+              <div class="item-price">${item.price}</div>
+              <input
+                type="number"
+                class="item-quantity"
+                value=${item.quantity}
+                onchange="updateProductQuantity(this, ${item.id})">
+              <a href=${item.url_to_remove}>Remove</a>
+            </div>`
+  
+          stringHTML += itemHtml
+        })
+  
+        stringHTML += `
+        <div class="cart-total">Total price: ${Shopify.formatMoney(cart.total_price)}</div>
+        <input
+          type="submit"
+          name="checkout"
+          value="Checkout">
+        </form>`
+
+        contentCart.innerHTML = stringHTML
       })
     })
     .catch(error => {

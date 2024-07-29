@@ -10,8 +10,9 @@
         <div class="item-price">{{ item.price | money }}</div>
         <input
           type="number"
-          class="item-quantity"
-          value={{ item.quantity }}>
+          class="item-quantity item-quantity-{{item.id}}"
+          value={{ item.quantity }}
+          onchange="updateProductQuantity(this, {{item.id}})">
         <a href="{{ item.url_to_remove }}">Remove</a>
       </div>
     {% endfor %}

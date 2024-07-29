@@ -1,8 +1,7 @@
-<div id="cart-drawer" class="cart-drawer inactive">
-  <div class="cart-background"></div>
+<div id="cart-drawer" class="cart-drawer">
   <div class="cart-product">
     <h2>Your cart</h2>
-    <div class="">
+    <div class="cart-content">
       {% form 'cart'
         , cart %}
         {% if cart.items.size > 0 %}
@@ -35,12 +34,17 @@
   </div>
 </div>
 
-
+<div
+  id="cart-overlay"
+  class="cart-overlay"
+  onclick="toggleCartDrawer()"></div>
 
 <script>
-    var cart = document.querySelector('.cart-product')
-
-    cart.addEventListener('click', (e) => {
-      e.stopPropagation()
-    })
+    function toggleCartDrawer() {
+    var cartDrawer = document.getElementById('cart-drawer');
+    var cartOverlay = document.getElementById('cart-overlay');
+    
+    cartDrawer.classList.toggle('open');
+    cartOverlay.classList.toggle('open');
+  }
 </script>
