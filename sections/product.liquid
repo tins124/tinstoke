@@ -1,8 +1,50 @@
 {{ 'section-product.css' | asset_url | stylesheet_tag }}
 
+{% stylesheet %}
+  .section-product {
+    display: block;
+  }
+
+  @media (min-width: 1000px) {
+    .section-product {
+      display: flex;
+      flex-direction: row;
+    }
+
+    .product-img_div,
+    .product-info {
+      flex: 1;
+    }
+
+    .product-title {
+      font-size: 28px;
+    }
+
+    .product-description {
+      font-size: 18px;
+    }
+
+    .product-price {
+      font-size: 22px;
+    }
+
+    .product-option fieldset {
+      padding: 15px;
+    }
+
+    #product-quantity {
+      font-size: 24px;
+    }
+
+    #button-add_to_cart {
+      font-size: 32px;
+    }
+  }
+{% endstylesheet %}
+
 <div class="section-product">
 
-  <div>
+  <div class="product-img_div">
     {% unless product.selected_or_first_available_variant.featured_image == null %}
       <img
         class="product-image"
@@ -21,6 +63,20 @@
     {% endunless %}
   </div>
 
+  <script>
+    var productImage = document.querySelector('.product-img_div')
+    var currentIndex = 0
+    
+    productImage.addEventListener('click', () => {
+      var images = {{ product.images | json }}
+      var imgTag = document.querySelector('.product-image')
+    
+      currentIndex = (currentIndex + 1) % images.length;
+    
+      imgTag.src = images[currentIndex]
+    })
+  </script>
+
   <div class="product-info">
     <div class="product-title">{{ product.title | upcase }}</div>
     <div class="product-description">{{ product.description }}</div>
@@ -28,6 +84,8 @@
       <span>{{ product.selected_or_first_available_variant.compare_at_price }}</span>
       <span>{{ product.selected_or_first_available_variant.price | money }}</span>
     </div>
+
+    {% assign available = product.selected_or_first_available_variant.available %}
 
     {% form 'product'
       , product %}
@@ -68,14 +126,15 @@
         style="margin: 2px; padding: 10px; font-size: 20px; border-radius: 10px">
 
       <div class="button-add_to_cart">
+
         <button
           id="button-add_to_cart"
           type="submit"
           style="color: black; font-size: 30px; border: 2px solid; padding: 10px; margin: 2px; border-radius: 10px;"
-          {% unless product.selected_or_first_available_variant.available %}
+          {% unless available %}
           disabled
           {% endunless %}>
-          {% if product.selected_or_first_available_variant.available %}
+          {% if available %}
             {{ "general.add_to_cart" | t }}
           {% else %}
             {{ "general.out_of_stock" | t }}
@@ -83,6 +142,31 @@
         </button>
       </div>
     {% endform %}
+
+    <div class="product-out_of_stock">
+      {% unless available %}
+        {% form 'contact' %}
+          {{ form.errors | default_errors }}
+
+          <div class="email">
+            <label for="email">Email</label>
+            <input
+              class="input-email"
+              type="email"
+              name="contact[email]"
+              id="email" />
+          </div>
+
+          <div class="submit">
+            <input
+              type="submit"
+              value="Notify me when back in stock"
+              id="input-send_mail" />
+          </div>
+        {% endform %}
+
+      {% endunless %}
+    </div>
   </div>
 </div>
 
@@ -114,7 +198,7 @@
       var url = new URL(document.location.href)
       url.searchParams.set('variant', matchedVariant.id)
   
-      window.history.replaceState(null, null, url.toString())
+      // window.history.replaceState(null, null, url.toString())
       document.querySelector('.product-price').textContent = Shopify.formatMoney(matchedVariant.price)
   
       document.querySelector('.product-image').setAttribute('src', matchedVariant.featured_image.src)
@@ -126,6 +210,29 @@
         buttonAddToCart.disabled = false
       }
       else{
+        var formOutOfStok = document.querySelector('.product-out_of_stock')
+        formOutOfStok.innerHTML = `
+          <form action='/contact#contact_form', method='post'>
+            <input type="hidden" name="form_type" value="contact" />
+            <input type="hidden" name="utf8" value="✓" />
+            <div class="email">
+              <label for="email">Email</label>
+              <input
+                class="input-email"
+                type="email"
+                name="contact[email]"
+                id="email" />
+            </div>
+    
+            <div class="submit">
+              <input
+                type="submit"
+                value="Notify me when back in stock"
+                id="input-send_mail" />
+            </div>
+          </form>
+        `
+  
         buttonAddToCart.textContent = "{{'general.out_of_stock' | t}}"
         buttonAddToCart.disabled = true
       }
@@ -172,7 +279,6 @@
                 class="item-quantity"
                 value=${item.quantity}
                 onchange="updateProductQuantity(this, ${item.id})">
-              <a href=${item.url_to_remove}>Remove</a>
             </div>`
   
           stringHTML += itemHtml
@@ -185,7 +291,7 @@
           name="checkout"
           value="Checkout">
         </form>`
-
+  
         contentCart.innerHTML = stringHTML
       })
     })
@@ -212,6 +318,19 @@
     "presets": [
       {
         "name": "product"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "image",
+        "name": "image block",
+        "settings": [
+          {
+            "type": "image_picker",
+            "label": "Your image",
+            "id": "image"
+          }
+        ]
       }
     ]
   }
