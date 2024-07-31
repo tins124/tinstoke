@@ -1,9 +1,63 @@
-<header class="section-header">
-  <h1><a href="/">{{ shop.name }}</a></h1>
-  <!-- Main menu -->
-  <ul>
-    {% for link in linklists.main-menu.links -%}
-      {{ link.title | link_to: link.url }}
-    {%- endfor %}
-  </ul>
+<header class="section-header" style="padding: 10px; width: 100%; background-color: #fff; position: fixed; z-index: 10; box-shadow: 1px 1px #d5d5d5; top: 0">
+
+  <h1>
+    <a href="/">{{ shop.name }}</a>
+  </h1>
+  <div class="header-element" style="display: flex; justify-content: space-between">
+    <!-- Main menu -->
+    <ul style="display: inline-block; justify-content: space-between">
+      {% for link in linklists.main-menu.links -%}
+        {{ link.title | link_to: link.url }}
+      {%- endfor %}
+    </ul>
+
+    <div class="section-search" style="display: inline-block; margin-right: 20px;">
+      <input
+        type="text"
+        name="input-search"
+        id="input-search"
+        placeholder="Search ...."
+        style="width: 200px; padding: 10px; border-radius: 10px; border: 1px solid #c0c0c0"
+        onchange="searchProduct(this)">
+
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <div class="search-suggestions" id="search-suggestions"></div>
+    </div>
+  </div>
+
+  <script>
+      function searchProduct(e) {
+    axios.get("/search/suggest.json", {
+      params: {
+        q: e.value
+      }
+    })
+    .then(value => {
+      var searchSuggestions = document.getElementById('search-suggestions');
+      var products = value.data.resources.results.products
+      if (products.length > 0) {
+          var suggestionsHtml = '<ul>';
+          products.forEach(product => {
+              suggestionsHtml += `
+                  <li>
+                      <a href="${product.url}">
+                          <img src="${product.featured_image.url}" alt="${product.title}" />
+                          <span>${product.title}</span>
+                      </a>
+                  </li>
+              `;
+          });
+          suggestionsHtml += '</ul>';
+          searchSuggestions.innerHTML = suggestionsHtml;
+          searchSuggestions.style.display = 'block';
+      } else {
+          searchSuggestions.style.display = 'none';
+      }
+    })
+    .catch(err => {
+      console.log(err)
+    })
+      }
+  </script>
+
 </header>

@@ -1,53 +1,5 @@
 <h2>{{ collections['frontpage'].title }}</h2>
 
-<div class="section-search">
-  <input
-    type="text"
-    name="input-search"
-    id="input-search"
-    placeholder="Search ...."
-    style="width: 200px; padding: 10px; border-radius: 10px"
-    onchange="searchProduct(this)">
-
-  <i class="fa-solid fa-magnifying-glass"></i>
-  <div class="search-suggestions" id="search-suggestions"></div>
-</div>
-
-<script>
-  function searchProduct(e) {
-    axios.get("/search/suggest.json", {
-      params: {
-        q: e.value
-      }
-    })
-    .then(value => {
-      var searchSuggestions = document.getElementById('search-suggestions');
-      var products = value.data.resources.results.products
-      if (products.length > 0) {
-          var suggestionsHtml = '<ul>';
-          products.forEach(product => {
-              suggestionsHtml += `
-                  <li>
-                      <a href="${product.url}">
-                          <img src="${product.featured_image.url}" alt="${product.title}" />
-                          <span>${product.title}</span>
-                      </a>
-                  </li>
-              `;
-          });
-          suggestionsHtml += '</ul>';
-          searchSuggestions.innerHTML = suggestionsHtml;
-          searchSuggestions.style.display = 'block';
-      } else {
-          searchSuggestions.style.display = 'none';
-      }
-    })
-    .catch(err => {
-      console.log(err)
-    })
-  }
-</script>
-
 <a href="/collections">All collections</a>
 <div id="products-recommendation">
   {% for product in collections['automated-collection'].products %}

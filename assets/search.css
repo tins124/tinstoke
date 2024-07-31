@@ -6,7 +6,6 @@
 .search-suggestions {
     width: 500px;
     position: absolute;
-    left: 0;
     right: 0;
     background: white;
     border: 1px solid #ddd;
@@ -28,6 +27,10 @@
 .search-suggestions li {
     padding: 10px;
     border-bottom: 1px solid #ddd;
+}
+
+.search-suggestions li:hover {
+    background-color: #afafaf;
 }
 
 .search-suggestions li a {
