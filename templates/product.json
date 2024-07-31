@@ -1,17 +1,18 @@
 {
-    "name": "product",
-    "sections": {
-        "products": {
-            "id": "products",
-            "type": "product"
-        },
-        "product-recommendations": {
-            "id": "product-recommendations",
-            "type": "product-recommendations"
-        }
+  "sections": {
+    "products": {
+      "type": "product",
+      "settings": {
+      }
     },
-    "order": [
-        "products",
-        "product-recommendations"
-    ]
+    "product-recommendations": {
+      "type": "product-recommendations",
+      "settings": {
+      }
+    }
+  },
+  "order": [
+    "products",
+    "product-recommendations"
+  ]
 }

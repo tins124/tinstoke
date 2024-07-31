@@ -1,5 +1,3 @@
-{{ 'section-product.css' | asset_url | stylesheet_tag }}
-
 {% stylesheet %}
   .section-product {
     display: block;
@@ -40,6 +38,12 @@
       font-size: 32px;
     }
   }
+
+  .input-email,
+  .input-send_mail {
+    border-radius: 10px;
+    padding: 10px;
+  }
 {% endstylesheet %}
 
 <div class="section-product">
@@ -61,160 +65,105 @@
         width="500px"
         height="500px">
     {% endunless %}
-  </div>
+    <div class="product-images" style="height: 200px; overflow: auto; padding: 10px;">
+      {% for block in section.blocks %}
+        {% case block.type %}
+          {% when "image" %}
+            {% comment %} <div class="slide" {{ block.shopify_attributes }}> {% endcomment %}
+              {{ block.settings.image | image_url: width: 150 | image_tag: height: 150 }}
+            {% comment %} </div> {% endcomment %}
+        {% else %}
 
-  <script>
-    var productImage = document.querySelector('.product-img_div')
-    var currentIndex = 0
-    
-    productImage.addEventListener('click', () => {
+          {% endcase %}
+        {% endfor %}
+      </div>
+    </div>
+
+    <script>
+          var productImage = document.querySelector('.product-img_div')
+          var currentIndex = 0
+          
+          productImage.addEventListener('click', () => {
       var images = {{ product.images | json }}
       var imgTag = document.querySelector('.product-image')
-    
+          
       currentIndex = (currentIndex + 1) % images.length;
-    
+          
       imgTag.src = images[currentIndex]
-    })
-  </script>
+          })
+    </script>
 
-  <div class="product-info">
-    <div class="product-title">{{ product.title | upcase }}</div>
-    <div class="product-description">{{ product.description }}</div>
-    <div class="product-price">
-      <span>{{ product.selected_or_first_available_variant.compare_at_price }}</span>
-      <span>{{ product.selected_or_first_available_variant.price | money }}</span>
-    </div>
-
-    {% assign available = product.selected_or_first_available_variant.available %}
-
-    {% form 'product'
-      , product %}
-
-      <input
-        id="variant-id"
-        type="hidden"
-        name="id"
-        value="{{product.selected_or_first_available_variant.id}}">
-
-      {% if product.variants.size > 1 %}
-        <div class="product-option">
-          {% for option in product.options_with_values %}
-            <fieldset style="border-radius: 10px;">
-              <legend>{{ option.name }}</legend>
-
-              {% for value in option.values %}
-                <input
-                  {% if option.selected_value == value %}
-                  checked
-                  {% endif %}
-                  type="radio"
-                  value="{{value}}"
-                  name="{{option.name}}"
-                  id="{{option.name | handleize}}-{{value | handleize}}">
-                <label for="{{option.name | handleize}}-{{value | handleize}}">{{ value.name }}</label>
-              {% endfor %}
-            </fieldset>
-          {% endfor %}
-        </div>
-      {% endif %}
-      <input
-        id="product-quantity"
-        type="number"
-        name="quantity"
-        min="1"
-        value="1"
-        style="margin: 2px; padding: 10px; font-size: 20px; border-radius: 10px">
-
-      <div class="button-add_to_cart">
-
-        <button
-          id="button-add_to_cart"
-          type="submit"
-          style="color: black; font-size: 30px; border: 2px solid; padding: 10px; margin: 2px; border-radius: 10px;"
-          {% unless available %}
-          disabled
-          {% endunless %}>
-          {% if available %}
-            {{ "general.add_to_cart" | t }}
-          {% else %}
-            {{ "general.out_of_stock" | t }}
-          {% endif %}
-        </button>
+    <div class="product-info">
+      <div class="product-title">{{ product.title | upcase }}</div>
+      <div class="product-description">{{ product.description }}</div>
+      <div class="product-price">
+        <span>{{ product.selected_or_first_available_variant.compare_at_price }}</span>
+        <span>{{ product.selected_or_first_available_variant.price | money }}</span>
       </div>
-    {% endform %}
 
-    <div class="product-out_of_stock">
-      {% unless available %}
-        {% form 'contact' %}
-          {{ form.errors | default_errors }}
+      {% assign available = product.selected_or_first_available_variant.available %}
 
-          <div class="email">
-            <label for="email">Email</label>
-            <input
-              class="input-email"
-              type="email"
-              name="contact[email]"
-              id="email" />
+      {% form 'product'
+        , product %}
+
+        <input
+          id="variant-id"
+          type="hidden"
+          name="id"
+          value="{{product.selected_or_first_available_variant.id}}">
+
+        {% if product.variants.size > 1 %}
+          <div class="product-option">
+            {% for option in product.options_with_values %}
+              <fieldset style="border-radius: 10px;">
+                <legend>{{ option.name }}</legend>
+
+                {% for value in option.values %}
+                  <input
+                    {% if option.selected_value == value %}
+                    checked
+                    {% endif %}
+                    type="radio"
+                    value="{{value}}"
+                    name="{{option.name}}"
+                    id="{{option.name | handleize}}-{{value | handleize}}">
+                  <label for="{{option.name | handleize}}-{{value | handleize}}">{{ value.name }}</label>
+                {% endfor %}
+              </fieldset>
+            {% endfor %}
           </div>
+        {% endif %}
+        <input
+          id="product-quantity"
+          type="number"
+          name="quantity"
+          min="1"
+          value="1"
+          style="margin: 2px; padding: 10px; font-size: 20px; border-radius: 10px">
 
-          <div class="submit">
-            <input
-              type="submit"
-              value="Notify me when back in stock"
-              id="input-send_mail" />
-          </div>
-        {% endform %}
+        <div class="button-add_to_cart">
 
-      {% endunless %}
-    </div>
-  </div>
-</div>
+          <button
+            id="button-add_to_cart"
+            type="submit"
+            style="color: black; font-size: 30px; border: 2px solid; padding: 10px; margin: 2px; border-radius: 10px;"
+            {% unless available %}
+            disabled
+            {% endunless %}>
+            {% if available %}
+              {{ "general.add_to_cart" | t }}
+            {% else %}
+              {{ "general.out_of_stock" | t }}
+            {% endif %}
+          </button>
+        </div>
+      {% endform %}
 
-<script>
-  var product = {{product |  json}}
-  
-  document.querySelectorAll('.product-option input[type="radio"]').forEach(radio => {
-    radio.addEventListener('change', () => {
-      var selectedOption = []
-  
-      document.querySelectorAll('.product-option input[type="radio"]:checked').forEach(check => {
-        selectedOption.push(check.value)
-      })
-  
-      var matchedVariant = product.variants.find(variant => {
-        var pass = true
-  
-        for(var i = 0; i < selectedOption.length; i++){
-          if(selectedOption.indexOf(variant.options[i]) === -1){
-            pass = false
-            break
-          }    
-        }
-        return pass
-      })
-  
-      document.querySelector("#variant-id").value = matchedVariant.id
-  
-      var url = new URL(document.location.href)
-      url.searchParams.set('variant', matchedVariant.id)
-  
-      // window.history.replaceState(null, null, url.toString())
-      document.querySelector('.product-price').textContent = Shopify.formatMoney(matchedVariant.price)
-  
-      document.querySelector('.product-image').setAttribute('src', matchedVariant.featured_image.src)
-  
-      var buttonAddToCart = document.querySelector('#button-add_to_cart')
-  
-      if(matchedVariant.available){
-        buttonAddToCart.textContent = "{{'general.add_to_cart' | t}}"
-        buttonAddToCart.disabled = false
-      }
-      else{
-        var formOutOfStok = document.querySelector('.product-out_of_stock')
-        formOutOfStok.innerHTML = `
-          <form action='/contact#contact_form', method='post'>
-            <input type="hidden" name="form_type" value="contact" />
-            <input type="hidden" name="utf8" value="✓" />
+      <div class="product-out_of_stock">
+        {% unless available %}
+          {% form 'contact' %}
+            {{ form.errors | default_errors }}
+
             <div class="email">
               <label for="email">Email</label>
               <input
@@ -223,37 +172,105 @@
                 name="contact[email]"
                 id="email" />
             </div>
-    
+
             <div class="submit">
               <input
                 type="submit"
                 value="Notify me when back in stock"
                 id="input-send_mail" />
             </div>
+          {% endform %}
+
+        {% endunless %}
+      </div>
+    </div>
+  </div>
+
+  <script>
+      var product = {{product |  json}}
+      
+      document.querySelectorAll('.product-option input[type="radio"]').forEach(radio => {
+    radio.addEventListener('change', () => {
+      var selectedOption = []
+      
+      document.querySelectorAll('.product-option input[type="radio"]:checked').forEach(check => {
+        selectedOption.push(check.value)
+      })
+      
+      var matchedVariant = product.variants.find(variant => {
+        var pass = true
+      
+        for(var i = 0; i < selectedOption.length; i++){
+          if(selectedOption.indexOf(variant.options[i]) === -1){
+            pass = false
+            break
+          }    
+        }
+        return pass
+      })
+      
+      document.querySelector("#variant-id").value = matchedVariant.id
+      
+      var url = new URL(document.location.href)
+      url.searchParams.set('variant', matchedVariant.id)
+      
+      window.history.replaceState(null, null, url.toString())
+      document.querySelector('.product-price').textContent = Shopify.formatMoney(matchedVariant.price)
+      
+      document.querySelector('.product-image').setAttribute('src', matchedVariant.featured_image.src)
+      
+      var buttonAddToCart = document.querySelector('#button-add_to_cart')
+      
+      var formOutOfStok = document.querySelector('.product-out_of_stock')
+      if(matchedVariant.available){
+        buttonAddToCart.textContent = "{{'general.add_to_cart' | t}}"
+        buttonAddToCart.disabled = false
+        formOutOfStok.innerHTML = ''
+      }
+      else{
+        formOutOfStok.innerHTML = `
+          <form action='/contact#contact_form', method='post'>
+            <input type="hidden" name="form_type" value="contact" />
+            <input type="hidden" name="utf8" value="✓" />
+            <div class="email">
+              <input
+                class="input-email"
+                type="email"
+                name="contact[email]"
+                placeholder='Enter your email ...'
+                id="email" />
+            </div>
+    
+            <div class="submit">
+              <input
+                class='input-send_mail'
+                type="submit"
+                value="Notify me when back in stock"
+                id="input-send_mail" />
+            </div>
           </form>
         `
-  
         buttonAddToCart.textContent = "{{'general.out_of_stock' | t}}"
         buttonAddToCart.disabled = true
       }
     })
-  })
-  
-  var buttonAddToCart = document.querySelector('#button-add_to_cart')
-  buttonAddToCart.addEventListener('click', addToCart)
-  
-  function addToCart(e) {
+      })
+      
+      var buttonAddToCart = document.querySelector('#button-add_to_cart')
+      buttonAddToCart.addEventListener('click', addToCart)
+      
+      function addToCart(e) {
     e.preventDefault()
-  
+      
     var cartDrawer = document.getElementById("cart-drawer")
     var cartOverlay = document.getElementById('cart-overlay');
     
     cartDrawer.classList.toggle('open');
     cartOverlay.classList.toggle('open');
-  
+      
     var id = document.querySelector('#variant-id').value
     var quantity = document.querySelector('#product-quantity').value
-  
+      
     axios.post('/cart/add', {
         id,
         quantity
@@ -264,11 +281,11 @@
         var cart = value.data
         var contentCart = document.querySelector('.cart-content')
         console.log(value.data)
-  
+      
         // var routeCheckout = {{ routes.cart_url | json }}
         // console.log(routeCheckout)
         var stringHTML = '<form action="/cart" method="post">'
-  
+      
         cart.items.forEach(item =>{
           var itemHtml = `<div class="product-grid">
               <img src=${item.image} width='100px' height='100px'>
@@ -280,10 +297,10 @@
                 value=${item.quantity}
                 onchange="updateProductQuantity(this, ${item.id})">
             </div>`
-  
+      
           stringHTML += itemHtml
         })
-  
+      
         stringHTML += `
         <div class="cart-total">Total price: ${Shopify.formatMoney(cart.total_price)}</div>
         <input
@@ -291,47 +308,47 @@
           name="checkout"
           value="Checkout">
         </form>`
-  
+      
         contentCart.innerHTML = stringHTML
       })
     })
     .catch(error => {
       console.log(error)
     })
-  }
-</script>
+      }
+  </script>
 
-{% schema %}
-  {
-    "name": "product",
-    "settings": [
-      {
-        "id": "product-name",
-        "type": "text",
-        "label": "Product's name"
-      }, {
-        "id": "product-price",
-        "type": "number",
-        "label": "Product's price"
-      }
-    ],
-    "presets": [
-      {
-        "name": "product"
-      }
-    ],
-    "blocks": [
-      {
-        "type": "image",
-        "name": "image block",
-        "settings": [
-          {
-            "type": "image_picker",
-            "label": "Your image",
-            "id": "image"
-          }
-        ]
-      }
-    ]
-  }
-{% endschema %}
+  {% schema %}
+    {
+      "name": "product",
+      "settings": [
+        {
+          "id": "product-name",
+          "type": "text",
+          "label": "Product's name"
+        }, {
+          "id": "product-price",
+          "type": "number",
+          "label": "Product's price"
+        }
+      ],
+      "presets": [
+        {
+          "name": "product"
+        }
+      ],
+      "blocks": [
+        {
+          "type": "image",
+          "name": "image block",
+          "settings": [
+            {
+              "type": "image_picker",
+              "label": "Your image",
+              "id": "image"
+            }
+          ]
+        }
+      ]
+    }
+  {% endschema %}

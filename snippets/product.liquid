@@ -1,6 +1,24 @@
 <div class="product-grid">
   <a href="{{product.url}}">
-    {{ product.featured_image | image_url: width: 200 | image_tag }}
+    <img
+      srcset="
+        {%- if product.featured_media.width >= 165 -%}{{ product.featured_media | image_url: width: 165 }} 165w,{%- endif -%}
+        {%- if product.featured_media.width >= 360 -%}{{ product.featured_media | image_url: width: 360 }} 360w,{%- endif -%}
+        {%- if product.featured_media.width >= 533 -%}{{ product.featured_media | image_url: width: 533 }} 533w,{%- endif -%}
+        {%- if product.featured_media.width >= 720 -%}{{ product.featured_media | image_url: width: 720 }} 720w,{%- endif -%}
+        {%- if product.featured_media.width >= 940 -%}{{ product.featured_media | image_url: width: 940 }} 940w,{%- endif -%}
+        {%- if product.featured_media.width >= 1066 -%}{{ product.featured_media | image_url: width: 1066 }} 1066w,{%- endif -%}
+        {{ product.featured_media | image_url }} {{ product.featured_media.width }}w
+      "
+      src="{{ product.featured_media | image_url: width: 533 }}"
+      alt="{{ product.featured_media.alt | escape }}"
+      class="motion-reduce"
+      {% unless lazy_load == false %}
+      loading="lazy"
+      {% endunless %}
+      width="100px"
+      height="100px"
+    >
   </a>
   <div>{{ product.title | upcase }}</div>
   <div>{{ product.price | money }}</div>

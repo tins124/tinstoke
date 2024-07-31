@@ -1,4 +1,4 @@
-<h1>{{section.settings.title}}</h1>
+<h1>{{ section.settings.title }}</h1>
 
 <div>
   <select id="sort-by">
@@ -15,19 +15,13 @@
     {% endfor %}
   </select>
 </div>
-{% paginate collection.products by 6 %}
+{% paginate collection.products by section.settings.product_per_page %}
   <div class="collection-product">
     {% for product in collection.products %}
-      <div class="product-grid">
-        <a href="{{product.url}}">
-          {{ product.featured_image | image_url: width: 200 | image_tag }}
-        </a>
-        <div>{{ product.title | upcase }}</div>
-        <div>{{ product.price | money }}</div>
-      </div>
+      {% render 'product', product: product %}
     {% endfor %}
   </div>
-  <div id="pagination" style="display: flex; justify-content: space-evenly">
+  <div id="pagination" style="display: flex; justify-content: space-around">
     {{ paginate | default_pagination }}
   </div>
 {% endpaginate %}
@@ -63,9 +57,24 @@
     "settings": [
       {
         "id": "title",
-        "label" :"Title",
+        "label": "Title",
         "type": "text",
-        "default": "{{collection.title}}"
+        "default": "{{ collection.title }}"
+      }, {
+        "id": "product_per_page",
+        "type": "range",
+        "label": "Product per page",
+        "min": 4,
+        "max": 20,
+        "step": 4,
+        "default": 12
+      }, {
+        "id": "product_per_line",
+        "type": "range",
+        "label": "Product per line",
+        "min": 1,
+        "max": 6,
+        "default": 4
       }
     ]
   }
