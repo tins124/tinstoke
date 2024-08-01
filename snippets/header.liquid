@@ -1,7 +1,7 @@
 <header class="section-header" style="padding: 10px; width: 100%; background-color: #fff; position: fixed; z-index: 10; box-shadow: 1px 1px #d5d5d5; top: 0">
 
   <h1>
-    <a href="/">{{ shop.name }}</a>
+    <a href="{{routes.root_url}}">{{ shop.name }}</a>
   </h1>
   <div class="header-element" style="display: flex; justify-content: space-between">
     <!-- Main menu -->
@@ -12,6 +12,65 @@
     </ul>
 
     <div class="section-search" style="display: inline-block; margin-right: 20px;">
+      <div class="dropdown-language">
+        <button class="dropbtn-language">Language</button>
+        <div class="dropdown-content">
+          <a href="#">Link 1</a>
+          <a href="#">Link 2</a>
+          <a href="#">Link 3</a>
+        </div>
+      </div>
+
+      <style>
+        /* Style The Dropdown Button */
+        .dropbtn-language {
+          background-color: #4CAF50;
+          color: white;
+          padding: 16px;
+          font-size: 16px;
+          border: none;
+          cursor: pointer;
+        }
+
+        /* The container <div> - needed to position the dropdown content */
+        .dropdown-language {
+          position: relative;
+          display: inline-block;
+        }
+
+        /* Dropdown Content (Hidden by Default) */
+        .dropdown-content {
+          display: none;
+          position: absolute;
+          background-color: #f9f9f9;
+          min-width: 160px;
+          box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+          z-index: 1;
+        }
+
+        /* Links inside the dropdown */
+        .dropdown-content a {
+          color: black;
+          padding: 12px 16px;
+          text-decoration: none;
+          display: block;
+        }
+
+        /* Change color of dropdown links on hover */
+        .dropdown-content a:hover {
+          background-color: #f1f1f1
+        }
+
+        /* Show the dropdown menu on hover */
+        .dropdown-language:hover .dropdown-content {
+          display: block;
+        }
+
+        /* Change the background color of the dropdown button when the dropdown content is shown */
+        .dropdown-language:hover .dropbtn {
+          background-color: #3e8e41;
+        }
+      </style>
       <input
         type="text"
         name="input-search"
