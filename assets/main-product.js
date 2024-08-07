@@ -7,17 +7,17 @@ function updateProductQuantity(e, id) {
         }
     };
     axios.post('/cart/update.js', data)
-    .then((result) => {
-        return result.data.total_price
-    })
-    .then((value) => {
-        var totalPrice = document.querySelectorAll('.cart-total')
-
-        totalPrice.forEach(total => {
-            total.innerHTML = 'Total price: ' + Shopify.formatMoney(value)
+        .then((result) => {
+            return result.data.total_price
         })
-    })
-    .catch((err) => {
-        console.error(err)
-    });
+        .then((value) => {
+            var totalPrice = document.querySelectorAll('.cart-total')
+
+            totalPrice.forEach(total => {
+                total.innerHTML = 'Total price: ' + `<span class='money'>${Shopify.formatMoney(value)}</span>`
+            })
+        })
+        .catch((err) => {
+            console.error(err)
+        });
 }

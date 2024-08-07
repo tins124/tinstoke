@@ -1,6 +1,7 @@
 {
     "general": {
         "add_to_cart": "Add to Cart",
-        "out_of_stock": "Out of stock"
+        "out_of_stock": "Out of stock",
+        "button_languague": "Language",
     }
 }

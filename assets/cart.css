@@ -10,9 +10,13 @@
     transform: translateX(100%);
     transition: transform 0.3s ease;
     z-index: 1001;
-    padding: 10px;
-    overflow: auto;
+    padding: 10px;  
     border-radius: 10px 0px 0px 10px;
+}
+
+.cart-drawer-product {
+    height: 75%;
+    overflow: auto;
 }
 
 .cart-drawer.open {

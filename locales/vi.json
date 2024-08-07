@@ -1,6 +1,7 @@
 {
     "general": {
         "add_to_cart": "Thêm vào giỏ hàng",
-        "out_of_stock": "Hết hàng"
+        "out_of_stock": "Hết hàng",        
+        "button_languague": "Ngôn ngữ"
     }
 }

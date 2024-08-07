@@ -9,7 +9,9 @@
             <div class="product-grid">
               {{ item.image | image_url: width: 100 | image_tag: height: 100 }}
               <div class="item-title">{{ item.title }}</div>
-              <div class="item-price">{{ item.price | money }}</div>
+              <div class="item-price">
+                <span class="money">{{ item.price | money }}</span>
+              </div>
               <input
                 type="number"
                 class="item-quantity"
@@ -22,7 +24,9 @@
 
         <hr>
 
-        <div class="cart-total">Total price: {{ cart.total_price | money }}</div>
+        <div class="cart-total">Total price:
+          <span class="money">{{ cart.total_price | money }}</span>
+        </div>
 
         <input
           type="submit"

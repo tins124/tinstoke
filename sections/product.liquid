@@ -56,8 +56,8 @@
     <div class="product-title">{{ product.title | upcase }}</div>
     <div class="product-description">{{ product.description }}</div>
     <div class="product-price">
-      <span>{{ product.selected_or_first_available_variant.compare_at_price }}</span>
-      <span>{{ product.selected_or_first_available_variant.price | money }}</span>
+      <span class="money" style="text-decoration: line-through;">{{ product.compare_at_price | money }}</span>
+      <span class="money">{{ product.selected_or_first_available_variant.price | money }}</span>
     </div>
 
     {% assign available = product.selected_or_first_available_variant.available %}
@@ -146,10 +146,10 @@
     </div>
   </div>
 </div>
-
 <script>
-      var product = {{product |  json}}
-      
+      var product = {{product | json}}
+  
+      console.log(product)
       document.querySelectorAll('.product-option input[type="radio"]').forEach(radio => {
         radio.addEventListener('change', () => {
           var selectedOption = []
@@ -176,7 +176,9 @@
           url.searchParams.set('variant', matchedVariant.id)
           
           window.history.replaceState(null, null, url.toString())
-          document.querySelector('.product-price').textContent = Shopify.formatMoney(matchedVariant.price)
+          var formatMoney = "{{shop.money_format | strip_html}}"
+          
+          document.querySelector('.product-price').innerHTML = `<span class='money'>${Shopify.formatMoney(matchedVariant.price, formatMoney)}</span>` 
           
           document.querySelector('.product-image').setAttribute('src', matchedVariant.featured_image.src)
           
@@ -245,12 +247,13 @@
           // var routeCheckout = {{ routes.cart_url | json }}
           // console.log(routeCheckout)
           var stringHTML = '<form action="/cart" method="post">'
+          stringHTML += '<div class="cart-drawer-product">'
         
           cart.items.forEach(item =>{
             var itemHtml = `<div class="product-grid">
                 <img src=${item.image} width='100px' height='100px'>
                 <div class="item-title">${item.title}</div>
-                <div class="item-price">${item.price}</div>
+                <div class="item-price"><span class='money'>${Shopify.formatMoney(item.price)}</span></div>
                 <input
                   type="number"
                   class="item-quantity"
@@ -262,8 +265,9 @@
           })
         
           stringHTML += `
+          </div>
           <hr>
-          <div class="cart-total">Total price: ${Shopify.formatMoney(cart.total_price)}</div>
+          <div class="cart-total">Total price: <span class='money'>${Shopify.formatMoney(cart.total_price)}</span></div>
           <input
             type="submit"
             name="checkout"
